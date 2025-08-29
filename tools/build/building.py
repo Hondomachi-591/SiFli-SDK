@@ -2372,7 +2372,7 @@ def SifliGccEnv(cpu):
     rtconfig.CFLAGS += ' -funsigned-char -fshort-enums -fshort-wchar'
     rtconfig.CFLAGS += ' -mlittle-endian -gdwarf-3 -Wno-packed -Wno-missing-noreturn -Wno-sign-conversion -Wno-unused-macros -Wnull-dereference'
     rtconfig.CFLAGS += ' -fno-unwind-tables -fno-exceptions'
-    rtconfig.CFLAGS += ' -fno-common'
+    rtconfig.CFLAGS += ' -fno-common -fno-strict-aliasing'
     
     rtconfig.CFLAGS += ' -Os'
     rtconfig.CXXFLAGS = rtconfig.CFLAGS
