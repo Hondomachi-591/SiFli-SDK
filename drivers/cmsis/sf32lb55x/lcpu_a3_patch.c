@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include "rtconfig.h"
 #include "bf0_hal.h"
 #include "mem_map.h"
 #include "register.h"
