@@ -415,8 +415,8 @@ menu "Using USB"
     config RT_USING_USB_HOST
         bool "Using USB host"
         default n
-        select RT_USING_USB
-
+        depends on BSP_USING_USBH
+        default n if BSP_USING_USBH
         if RT_USING_USB_HOST
             config RT_USBH_MSTORAGE
                 bool "Enable Udisk Drivers"
@@ -449,7 +449,8 @@ menu "Using USB"
         
     config RT_USING_USB_DEVICE
         bool "Using USB device"
-        default n
+        depends on BSP_USING_USBD
+        default n if BSP_USING_USBD
         if RT_USING_USB_DEVICE || RT_USING_USB_HOST
             config RT_USBD_THREAD_STACK_SZ
                 int "usb thread stack size"
@@ -462,6 +463,14 @@ menu "Using USB"
             config USB_PRODUCT_ID
                 hex "USB Product ID"
                 default 0x0001
+            if !SOC_SF32LB55X
+                config USB_TX_DMA_ENABLED
+                    bool "Enable USB TX DMA"
+                    default y
+                config USB_RX_DMA_ENABLED
+                    bool "Enable USB RX DMA"    
+                    default y
+            endif
 
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"

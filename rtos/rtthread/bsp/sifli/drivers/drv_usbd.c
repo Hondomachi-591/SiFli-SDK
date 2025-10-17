@@ -310,7 +310,7 @@ static void enabled_usb_protocol(void)
 }
 static void disabled_usb_protocol(void)
 {
-    //HAL_PCD_DisconnectCallback(NULL);
+    HAL_PCD_DisconnectCallback(NULL);
     HAL_PCD_MspDeInit(NULL);
     BSP_USB_Power_Down();
 }
