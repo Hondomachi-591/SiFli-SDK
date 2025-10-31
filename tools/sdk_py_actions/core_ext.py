@@ -165,6 +165,41 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
         except FileNotFoundError:
             raise FatalError('scons executable not found. Please ensure SCons is installed and available in PATH.')
 
+    def fullclean_callback(target_name: str, ctx: Context, args: PropertyDict) -> None:
+        """Remove build directories for the configured board."""
+        project_dir = args.project_dir
+        config = read_project_config(project_dir)
+        board = config.get('board')
+
+        if not board:
+            raise FatalError('No board configured. Please run "sdk.py set-target <board>" first.')
+
+        patterns = [
+            os.path.join(project_dir, f'build_{board}'),
+            os.path.join(project_dir, f'build_{board}_*'),
+        ]
+
+        removed_dirs: List[str] = []
+        project_root = os.path.realpath(project_dir)
+        for pattern in patterns:
+            for path in glob.glob(pattern):
+                if not os.path.isdir(path):
+                    continue
+                abs_path = os.path.realpath(path)
+                if os.path.commonpath([project_root, abs_path]) != project_root:
+                    continue
+                if abs_path == project_root:
+                    continue
+                print(f'Removing {abs_path}')
+                try:
+                    shutil.rmtree(abs_path)
+                    removed_dirs.append(abs_path)
+                except OSError as e:
+                    raise FatalError(f'Failed to remove {abs_path}: {e}') from e
+
+        if not removed_dirs:
+            print(f'No build directories matching "build_{board}_*" found in {project_dir}')
+
     def verbose_callback(ctx: Context, param: List, value: str) -> Optional[str]:
         if not value or ctx.resilient_parsing:
             return None
@@ -306,6 +341,11 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
                         'default': None,
                     },
                 ],
+            },
+            'fullclean': {
+                'callback': fullclean_callback,
+                'help': 'Remove build directories for the configured board.',
+                'options': global_options,
             },
         }
     }
