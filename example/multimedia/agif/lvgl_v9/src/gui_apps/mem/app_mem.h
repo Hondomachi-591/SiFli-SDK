@@ -269,14 +269,26 @@ uint8_t app_get_mem_type(void *data);
 
 #if defined(USING_EZIPA_DEC)
 #if IMAGE_CACHE_IN_PSRAM_SIZE > 0
+#ifndef EZIPA_LARGE_BUF_MALLOC
 #define EZIPA_LARGE_BUF_MALLOC(size) app_cache_alloc(size, IMAGE_CACHE_PSRAM)
+#endif
+#ifndef EZIPA_LARGE_BUF_FREE
 #define EZIPA_LARGE_BUF_FREE(p) app_cache_free(p)
+#endif
 #elif IMAGE_CACHE_IN_SRAM_SIZE > 0
+#ifndef EZIPA_LARGE_BUF_MALLOC
 #define EZIPA_LARGE_BUF_MALLOC(size) app_cache_alloc(size, IMAGE_CACHE_SRAM)
+#endif
+#ifndef EZIPA_LARGE_BUF_FREE
 #define EZIPA_LARGE_BUF_FREE(p) app_cache_free(p)
+#endif
 #else
+#ifndef EZIPA_LARGE_BUF_MALLOC
 #define EZIPA_LARGE_BUF_MALLOC(size) lv_mem_alloc(size)
+#endif
+#ifndef EZIPA_LARGE_BUF_FREE
 #define EZIPA_LARGE_BUF_FREE(p) lv_mem_free(p)
+#endif
 #endif
 #endif
 
