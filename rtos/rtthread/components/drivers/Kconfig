@@ -459,7 +459,7 @@ menu "Using USB"
         if RT_USING_USB_DEVICE
             config USB_VENDOR_ID
                 hex "USB Vendor ID"
-                default 0x0FFE
+                default 0x38F4
             config USB_PRODUCT_ID
                 hex "USB Product ID"
                 default 0x0001
