@@ -53,6 +53,15 @@ RT_WEAK uint32_t lv_img_decode_flash_read(uint32_t addr, uint8_t *buf, int size)
 }
 #endif
 
+static inline void mono2stereo(int16_t *mono, uint32_t samples, int16_t *stereo)
+{
+    for (int i = 0; i < samples; i++)
+    {
+        *stereo++ = *mono;
+        *stereo++ = *mono++;
+    }
+}
+
 int ezip_flash_read(ffmpeg_handle thiz, void *buf, int len)
 {
     if ((uint32_t)(thiz->ezip_fd + len) >= thiz->src_in_nand_len)
@@ -303,6 +312,28 @@ static void decode_audio_packet(ffmpeg_handle thiz, AVPacket *orig, AVPacket *cu
                 thiz->audio_data_period = thiz->audio_data_size / (thiz->audio_samplerate * thiz->audio_frame->channels * (arg.write_bits_per_sample >> 3) / 1000);
                 LOG_I("audio_frame_size=%d, sr=%d", thiz->audio_data_size, thiz->audio_samplerate);
                 LOG_I("audio_data_period=%d", thiz->audio_data_period);
+#if !TWS_MIX_ENABLE
+                if (audio_device_is_a2dp_sink())
+                {
+                    arg.write_channnel_num = 2;
+                    arg.write_samplerate = 44100;
+                    if (arg.write_samplerate != thiz->audio_samplerate)
+                    {
+                        thiz->resample = sifli_resample_open(2, thiz->audio_samplerate, arg.write_samplerate);
+                        RT_ASSERT(thiz->resample);
+                    }
+                    if (thiz->audio_stereo)
+                    {
+                        thiz->cfg.mem_free(thiz->audio_stereo);
+                        thiz->audio_stereo = NULL;
+                    }
+                    if (thiz->audio_channel != 2)
+                    {
+                        thiz->audio_stereo = (uint16_t *)thiz->cfg.mem_malloc(thiz->audio_data_size * 2);
+                        RT_ASSERT(thiz->audio_stereo);
+                    }
+                }
+#endif
                 thiz->audio_handle = audio_open(AUDIO_TYPE_LOCAL_MUSIC, AUDIO_TX, &arg, audio_callback_func, thiz);
                 RT_ASSERT(thiz->audio_handle);
             }
@@ -310,8 +341,10 @@ static void decode_audio_packet(ffmpeg_handle thiz, AVPacket *orig, AVPacket *cu
             uint32_t new_size = thiz->audio_frame->nb_samples * thiz->audio_frame->channels * sizeof(uint16_t);
             thiz->audio_data_period = new_size / (thiz->audio_samplerate * thiz->audio_frame->channels * 2 / 1000);
 
+            uint8_t data_size_changed = 0;
             if (new_size > thiz->audio_data_size)
             {
+                data_size_changed = 1;
                 thiz->cfg.mem_free(thiz->audio_data);
                 thiz->audio_data_size = new_size;
                 thiz->audio_data = (uint16_t *)thiz->cfg.mem_malloc(new_size);
@@ -326,7 +359,59 @@ static void decode_audio_packet(ffmpeg_handle thiz, AVPacket *orig, AVPacket *cu
                 av_frame_unref(thiz->audio_frame);
 
             TRACE_MARK_START(TRACEID_AUDIO_WRITE);
-            while (0 == audio_write(thiz->audio_handle, (uint8_t *)thiz->audio_data, new_size))
+
+            uint32_t write_bytes = new_size;
+            uint8_t *write_ptr = thiz->audio_data;
+#if !TWS_MIX_ENABLE
+            if (audio_device_is_a2dp_sink())
+            {
+                if (data_size_changed || !thiz->audio_stereo)
+                {
+                    if (thiz->audio_stereo)
+                    {
+                        thiz->cfg.mem_free(thiz->audio_stereo);
+                        thiz->audio_stereo = NULL;
+                    }
+                    if (thiz->audio_channel != 2)
+                    {
+                        thiz->audio_stereo = (uint16_t *)thiz->cfg.mem_malloc(thiz->audio_data_size * 2);
+                        RT_ASSERT(thiz->audio_stereo);
+                    }
+                }
+                if (thiz->audio_samplerate != 44100)
+                {
+                    if (!thiz->resample)
+                    {
+                        thiz->resample = sifli_resample_open(2, thiz->audio_samplerate, 44100);
+                        RT_ASSERT(thiz->resample);
+
+                    }
+                }
+                if (thiz->audio_channel == 2)
+                {
+                    if (thiz->audio_samplerate != 44100)
+                    {
+                        write_bytes = sifli_resample_process(thiz->resample, (int16_t *)thiz->audio_data, new_size, 0);
+                        write_ptr = (uint8_t *)sifli_resample_get_output(thiz->resample);
+                    }
+                }
+                else
+                {
+                    mono2stereo((int16_t *)thiz->audio_data, new_size / 2, thiz->audio_stereo);
+                    if (thiz->audio_samplerate != 44100)
+                    {
+                        write_bytes = sifli_resample_process(thiz->resample, (int16_t *)thiz->audio_stereo, new_size * 2, 0);
+                        write_ptr = (uint8_t *)sifli_resample_get_output(thiz->resample);
+                    }
+                    else
+                    {
+                        write_bytes = new_size * 2;
+                        write_ptr = thiz->audio_stereo;
+                    }
+                }
+            }
+#endif
+            while (0 == audio_write(thiz->audio_handle, write_ptr, write_bytes))
             {
                 uint32_t    evt = 0;
                 uint32_t    wait_ticks = rt_tick_from_millisecond(thiz->audio_data_period);
@@ -819,6 +904,19 @@ static void clean_up(ffmpeg_handle thiz)
         thiz->audio_data = NULL;
     }
 
+#if !TWS_MIX_ENABLE
+    if (thiz->audio_stereo && thiz->cfg.mem_free)
+    {
+        thiz->cfg.mem_free(thiz->audio_stereo);
+        thiz->audio_stereo = NULL;
+    }
+    if (thiz->resample)
+    {
+        sifli_resample_close(thiz->resample);
+        thiz->resample = NULL;
+    }
+#endif
+
     // Codec context is freed inside.
     avformat_close_input(&thiz->fmt_ctx);
 
@@ -1011,7 +1109,7 @@ static int mediaplayer_start(ffmpeg_handle thiz, bool is_file)
             thiz->period = 40;
             thiz->period_float = 40.0f;
         }
-        thiz->total_time_in_seconds = thiz->fmt_ctx->duration;
+        thiz->total_time_in_seconds = thiz->fmt_ctx->duration / AV_TIME_BASE;
         char *name = avcodec_get_name(thiz->video_dec_ctx->codec_id);
 
         thiz->gpu_pic_fmt = e_sifli_fmt_yuv420p;
@@ -1271,6 +1369,18 @@ static void ezip_clean_up(ffmpeg_handle thiz)
         thiz->cfg.mem_free(thiz->audio_data);
         thiz->audio_data = NULL;
     }
+#if !TWS_MIX_ENABLE
+    if (thiz->audio_stereo && thiz->cfg.mem_free)
+    {
+        thiz->cfg.mem_free(thiz->audio_stereo);
+        thiz->audio_stereo = NULL;
+    }
+    if (thiz->resample)
+    {
+        sifli_resample_close(thiz->resample);
+        thiz->resample = NULL;
+    }
+#endif
     ezip_audio_cache_deinit(thiz);
     ezip_video_cache_deinit(thiz);
 

@@ -1,5 +1,7 @@
 #ifndef MEDIA_INTERNAL_H
 #define MEDIA_INTERNAL_H
+#include "sifli_resample.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,41 +25,41 @@ enum
 };
 
 #ifdef PKG_USING_SYSTEMVIEW
-    #define TRACE_MARK_START(id)  SEGGER_SYSVIEW_OnUserStart(id)
-    #define TRACE_MARK_STOP(id)   SEGGER_SYSVIEW_OnUserStop(id)
+#define TRACE_MARK_START(id)  SEGGER_SYSVIEW_OnUserStart(id)
+#define TRACE_MARK_STOP(id)   SEGGER_SYSVIEW_OnUserStop(id)
 #else
-    #define TRACE_MARK_START(id)
-    #define TRACE_MARK_STOP(id)
+#define TRACE_MARK_START(id)
+#define TRACE_MARK_STOP(id)
 #endif /* PKG_USING_SYSTEMVIEW */
 
 
 #ifdef BSP_USING_PC_SIMULATOR
-    #define __IO
-    #define audio_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
-    #define video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
+#define __IO
+#define audio_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
+#define video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
 
-    #define audio_video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
-    #define av_read_pkt_task_prio     RT_THREAD_PRIORITY_MIDDLE
+#define audio_video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
+#define av_read_pkt_task_prio     RT_THREAD_PRIORITY_MIDDLE
 
-    #define network_read_task_prio    RT_THREAD_PRIORITY_MIDDLE
-    #define network_decode_task_prio  RT_THREAD_PRIORITY_MIDDLE
+#define network_read_task_prio    RT_THREAD_PRIORITY_MIDDLE
+#define network_decode_task_prio  RT_THREAD_PRIORITY_MIDDLE
 #else
-    #define __IO    volatile
-    #define audio_dec_task_prio (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_HIGHER)
-    #define video_dec_task_prio (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER)
+#define __IO    volatile
+#define audio_dec_task_prio (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_HIGHER)
+#define video_dec_task_prio (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER)
 
-    #define audio_video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
-    #define av_read_pkt_task_prio     (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER + RT_THREAD_PRIORITY_LOWWER)
+#define audio_video_dec_task_prio RT_THREAD_PRIORITY_MIDDLE
+#define av_read_pkt_task_prio     (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER + RT_THREAD_PRIORITY_LOWWER)
 
-    #define network_read_task_prio    (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_HIGHER + RT_THREAD_PRIORITY_HIGHER)
-    #define network_decode_task_prio  (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER)
+#define network_read_task_prio    (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_HIGHER + RT_THREAD_PRIORITY_HIGHER)
+#define network_decode_task_prio  (RT_THREAD_PRIORITY_MIDDLE + RT_THREAD_PRIORITY_LOWWER)
 #endif /* BSP_USING_PC_SIMULATOR */
 
 
 #define NETWORK_BUFFER_CAPACITY     64   //cache AVPacket from network download
 #define READ_BUFFER_CAPACITY        3    //Undecoded AVPacket
 #define AUDIO_CACHE_SIZE            32000
-#define EZIP_AUDIO_CACHE_SIZE       8192
+#define EZIP_AUDIO_CACHE_SIZE       (8192 + 4096) //tws need big enough
 
 #define FFMPEG_HANDLE_MAGIC     0x55555555
 
@@ -88,9 +90,9 @@ typedef struct
     uint32_t    data_len;
 } ezip_audio_packet_t;
 #if EZIP_DECODE_AUDIO_USING_FFMPEG
-    #define MP3_MAIN_BUFFER_SIZE    8
+#define MP3_MAIN_BUFFER_SIZE    8
 #else
-    #define MP3_MAIN_BUFFER_SIZE    8000
+#define MP3_MAIN_BUFFER_SIZE    8000
 #endif
 typedef struct
 {
@@ -194,6 +196,8 @@ typedef struct ffmpeg_decoder_tag
     ffmpeg_config_t         cfg;
     int                     ezip_fd;
     ezip_media_t            ezip_header;
+    sifli_resample_t       *resample;
+    uint8_t                *audio_stereo;
     uint8_t                 is_sifli_ezip_memdia;
     uint8_t                 is_nand;
     uint8_t                 is_network_file;

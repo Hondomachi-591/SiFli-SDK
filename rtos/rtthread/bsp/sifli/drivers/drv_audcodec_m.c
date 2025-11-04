@@ -469,7 +469,7 @@ int bf0_pll_calibration()
                 fc_vco = fc_vco + delta_fc_vco;
                 delta_cnt = target_cnt - pll_cnt;
             }
-            else if (pll_cnt > target_cnt)
+            else
             {
                 fc_vco = fc_vco - delta_fc_vco;
                 delta_cnt = pll_cnt - target_cnt;
@@ -505,7 +505,7 @@ int bf0_pll_calibration()
         {
             delta_cnt_min = target_cnt - pll_cnt;
         }
-        else if (pll_cnt > target_cnt)
+        else
         {
             delta_cnt_min = pll_cnt - target_cnt;
         }
@@ -520,7 +520,7 @@ int bf0_pll_calibration()
         {
             delta_cnt_max = target_cnt - pll_cnt;
         }
-        else if (pll_cnt > target_cnt)
+        else
         {
             delta_cnt_max = pll_cnt - target_cnt;
         }
