@@ -30,6 +30,9 @@ int main(void)
 #elif defined (BSP_USING_BOARD_SF32LB58_LCD_N16R64N4)
     HAL_PIN_Set(PAD_PB56, GPIO_B56, PIN_PULLDOWN, 1);
     HAL_PIN_Set(PAD_PB54, GPIO_B54, PIN_PULLDOWN, 1);
+#elif defined (BSP_USING_BOARD_SF32LB52_NANO_A128R16) || (BSP_USING_BOARD_SF32LB52_NANO_N16R16)
+    HAL_PIN_Set(PAD_PA34, GPIO_A34, PIN_PULLDOWN, 1);
+    HAL_PIN_Set(PAD_PA33, GPIO_A33, PIN_PULLDOWN, 1);
 #endif
     /*
     587 board PB pin needs to add 96
@@ -43,6 +46,8 @@ int main(void)
     cfg.pin = 34;
 #elif defined (BSP_USING_BOARD_SF32LB58_LCD_N16R64N4)
     cfg.pin = 152;
+#elif defined (BSP_USING_BOARD_SF32LB52_NANO_A128R16) || (BSP_USING_BOARD_SF32LB52_NANO_N16R16)
+    cfg.pin = 34;
 #endif
     cfg.active_state = BUTTON_ACTIVE_HIGH;
     cfg.mode = PIN_MODE_INPUT;
@@ -55,6 +60,8 @@ int main(void)
     cfg.pin = 11;
 #elif defined (BSP_USING_BOARD_SF32LB58_LCD_N16R64N4)
     cfg.pin = 150;
+#elif defined (BSP_USING_BOARD_SF32LB52_NANO_A128R16) || (BSP_USING_BOARD_SF32LB52_NANO_N16R16)
+    cfg.pin = 33;
 #endif
     cfg.active_state = BUTTON_ACTIVE_HIGH;
     cfg.mode = PIN_MODE_INPUT;
