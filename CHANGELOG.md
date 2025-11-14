@@ -1,4 +1,87 @@
-# SiFli SDK change Log v2.4.3
+# SiFli SDK change Log v2.4.4
+## Notice
+Board `sf32lb52-nano_52j` and `sf32lb52-nano_52b` are obsolete and retained for compatibility. They are not well supported by examples. Please use `sf32lb52-nano_a128r16`, `sf32lb52-nano_n16r16` and `sf32lb52-nano_n4` instead.
+
+## Change log since v2.4.3
+### Drivers
+#### Fixed
+- rgbled: Sync the RGB LED driver to fix the issue that RGBLED cannot be turned off
+- lcpu_a3_patch: Fix compile error when BSP_CHIP_ID_COMPATIBLE is defined for sf32lb55x
+- wdtL Fix LCPU crash after wakeup if wdt2 is enabled
+- rcc: Not reset GPIO2 when only LCPU is to be reset
+- adc: Fix channel7 is not initialized on sf32lb52x, i.e. all 8 channels should be initialized
+- adc: Shorten adc acquisition time
+
+#### Changed
+- aon: Add an LCPU sleep function interface for HCPU only application
+- adc: Optimize 52x adc channel 0~6 delay
+- spi_msd: Add idle mode support
+
+### Middleware
+#### Fixed
+- lwip: Fix ooseq update error
+- lwip/mqtt: Fix MQTT bug when MQTT packet in multiple TCP buffers
+- systemview: Fixes systemview not work when compiling using GCC
+- fsck: Fix C++ build error when fsck is enabled
+- audio: Fix audio 3a bypass bug
+- elm_rw: Fix transmission error if file is empty
+
+#### Changed
+- ulog: Enable ULOG_USING_ISR_LOG by default
+- mbedtls: Add DigiCert Global Root G2 certificate
+- audio: Add anyka speech algo
+- systemview: Add support for LVGL v9
+
+#### Added
+- core_dump: Add core dump module (it's dummy for now)
+
+### RTOS
+#### Fixed
+- Fix rt_kprintf Inf/NaN float issue
+
+#### Changed
+- libc: Add timezone support
+- libc: Fix build error if both RT_USING_PTHREADS and RT_USING_LIBC are enabled
+
+### Examples
+#### Fixed
+- ble/hid: Fix hid example only works during the first connection.
+- ble/hid: Fix array out-of-bounds access
+- bootloader: Invalidate cache after update ftab to fix OTA failure
+- bt/hft: Fix Keil compile issue
+- multimedia/lvgl/watch_v9: Fix the compilation error on sf32lb55x
+- storage/flashdb/nor: Support board `sf32lb56-lcd_n16r12n1` and `sf32lb58-lcd_n16r64n4`
+
+### Tools
+#### Fixed
+- build: Fix build error if LIBPATH is not defined or empty
+- build: Fix build error on Windows if there's Chinese character in rtconfig.h
+- build: Undefined generated macro to avoid redefinition
+- build: Disable GCC strict-aliasing to avoid undefined behavior for pointer aliasing
+- build: Fixed case sensitivity error in SIFLI_SDK_TOOLS_PATH environment variable
+- build: Fix Keil toolchain is not available by subprocess in env
+
+#### Changed
+- bin2bmp: Make bin2bmp work on both python3.x and 2.x
+- build: Add `LINKFLAGS_POST` variable to support user-defined link flags
+
+### Docs
+#### Changed
+- Update debugging and logging guide
+
+### BSP
+#### Fixed
+- board: Fix the wrong configuration of PA04, PA17 and PA18 when using DPI display on board sf32lb56-lcd
+- board: Change PA44 to nopull to fix VBUS_DET not work on board sf32lb52-lchspi-ulp 
+- board: Fix board sf32lb52-lchspi-ulp button not work when battery voltage is low
+- board: Add PA pin config in board 58-lcd_a128r32n1_dsi to make audio example work
+
+#### Added
+- board: Add board `sf32lb52-nano_a128r16`, `sf32lb52-nano_n16r16` and `sf32lb52-nano_n4`
+- board: Add board `sf32lb52-lcd_a128r16`
+- board: Add board `sf32lb52-core_n16r16`
+
+
 ## Change log since v2.4.2
 
 ### Drivers
