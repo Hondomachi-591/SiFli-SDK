@@ -2,6 +2,7 @@
 源码路径：example/rt_device/i2c/eeprom
 ## 支持的平台
 例程可以运行在以下开发板.
+* sf32lb52-nano系列
 * sf32lb52-lcd_n16r8
 * sf32lb58-lcd_n16r64n4
 
@@ -16,7 +17,8 @@ AT24CO8SC的SDA,SCK分别按照下表，根据开发板型号进行连接
 
 |开发板    |SDA管脚|SDA管脚名称|SCL管脚|SCL管脚名称|
 |:---     |:---    |:---     |:---   |:---      |
-|sf32lb52-lcd_n16r8 |3       |PA42     |5      |PA41      |
+|sf32lb52-nano_n16r16 |3        |PA42     |5      |PA41      |
+|sf32lb52-lcd_n16r8 |3          |PA42     |5      |PA41      |
 |sf32lb58-lcd_n16r64n4 |3       |PB29     |       |PB28      |
 
 * 更详细的引脚定义请参考\
