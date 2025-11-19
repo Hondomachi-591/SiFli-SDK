@@ -129,6 +129,10 @@ cd C:\OpenSiFli\SiFli-SDK
 .\install.ps1
 ```
 
+```{warning} 
+It should be noted that the pyenv tool should not be used to manage the Python environment of the system. Otherwise, errors may occur during the subsequent process.
+```
+
 ````{note}
 Domestic users in China can use the following commands to install tool packages through domestic mirror sources to avoid slow download speeds from default sources. Note that if you choose to execute the following commands, you do not need to execute the commands in the above code block.
 
