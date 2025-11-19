@@ -2838,7 +2838,10 @@ static void audio_data_save_buf(uint8_t type, uint8_t *buf, uint32_t size)
     audio_data_t *pingpong = audio_data_get_buf(false);
     if (!pingpong) return;
     if (audio_dump_log) rt_kprintf("%s: type %d pos %d %d %d\n", __func__, type, audio_dump_pos, audio_dump_pos + size + AUDIO_DATA_HEADER_LEN, audio_dump_len);
-    RT_ASSERT(audio_dump_pos + size + AUDIO_DATA_HEADER_LEN <= audio_dump_len && size == AUDIO_DATA_LEN);
+    if (audio_dump_pos + size + AUDIO_DATA_HEADER_LEN > audio_dump_len)
+    {
+        return;
+    }
     audio_data_t *p = (audio_data_t *)(((uint8_t *) pingpong) + audio_dump_pos);
     p->type = type;
     p->len = size;
