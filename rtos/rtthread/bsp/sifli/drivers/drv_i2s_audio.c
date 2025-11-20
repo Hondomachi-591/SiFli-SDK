@@ -72,7 +72,7 @@ struct bf0_i2s_audio
 ALIGN(4) static uint8_t audio_data[AUDIO_DATA_SIZE];
 ALIGN(4) static uint8_t audio_tx_data[AUDIO_DATA_SIZE];
 #ifdef ASIC
-#if 0 //xtal
+#ifdef SF32LB55X //xtal
 static CLK_DIV_T  txrx_clk_div[9]  = {{48000, 125, 125,  5}, {44100, 136, 136,  4}, {32000, 185, 190,  5}, {24000, 250, 250, 10}, {22050, 272, 272,  8},
     {16000, 384, 384, 12}, {12000, 500, 500, 20}, {11025, 544, 544, 16}, { 8000, 750, 750, 30}
 };//{16000, 375, 375, 15}  { 8000, 750, 750, 30}} { 8000, 768, 768, 24}
