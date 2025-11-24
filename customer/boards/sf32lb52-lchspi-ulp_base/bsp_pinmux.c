@@ -172,12 +172,13 @@ static void BSP_PIN_Common(void)
     // HAL_PIN_Set_Analog(PAD_PA36, 1);                    // USB_DM
     HAL_PIN_Set(PAD_PA35, GPIO_A35, PIN_PULLDOWN, 1);
     HAL_PIN_Set(PAD_PA36, GPIO_A36, PIN_PULLDOWN, 1);
-    // SPI1(TF card)
+    //SPI1(TF card)
     HAL_PIN_Set(PAD_PA24, SPI1_DIO, PIN_NOPULL, 1);
-    HAL_PIN_Set(PAD_PA25, SPI1_DI,  PIN_PULLDOWN, 1);
+    HAL_PIN_Set(PAD_PA25, SPI1_DI,  PIN_PULLUP, 1);
     HAL_PIN_Set(PAD_PA28, SPI1_CLK, PIN_NOPULL, 1);
     HAL_PIN_Set(PAD_PA29, SPI1_CS,  PIN_NOPULL, 1);
-
+    /*TF detect*/
+    HAL_PIN_Set(PAD_PA27, GPIO_A27, PIN_PULLUP, 1);/*card detect pin*/
     // I2C2 (charger)
     HAL_PIN_Set(PAD_PA10, I2C2_SCL, PIN_NOPULL, 1);
     HAL_PIN_Set(PAD_PA11, I2C2_SDA, PIN_NOPULL, 1);
