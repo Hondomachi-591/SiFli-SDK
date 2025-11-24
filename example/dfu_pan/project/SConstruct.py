@@ -1,18 +1,13 @@
 import os
 import rtconfig
 from building import *
-
 def create_env(proj_path = None):
     # Check SDK 
     SIFLI_SDK = os.getenv('SIFLI_SDK')
     if not SIFLI_SDK:
         print("Please run set_env.bat in root folder of SIFLI SDK to set environment.")
         exit()
-    print(SIFLI_SDK)
-
-    if proj_path is None:
-        AddBootLoader(SIFLI_SDK, rtconfig.CHIP)
-
+        
     if not GetDepend("SOC_SF32LB52X"):
         lcpu_proj_path = '../lcpu'
         lcpu_proj_name = 'lcpu'
@@ -22,21 +17,21 @@ def create_env(proj_path = None):
         AddLCPU(SIFLI_SDK, rtconfig.CHIP)
 
 
+    if proj_path is None:
+        print("Please AddBootLoader to set environment.\n")
+        AddBootLoader(SIFLI_SDK, rtconfig.CHIP)
+
     # Set default compile options
     SifliEnv(proj_path)
 
-    env = Environment(tools = ['mingw'],
-        AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-        AR = rtconfig.AR, ARFLAGS = '-rc',
-        LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
-    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-    return env
-
-def build(env):
+def build():
     # prepare building environment
-    objs = PrepareBuilding(env)
+    objs = PrepareBuilding(None)
+    env = GetCurrentEnv()
 
     TARGET = os.path.join(env['build_dir'], rtconfig.TARGET_NAME + '.' + rtconfig.TARGET_EXT)
     # make a building
     DoBuilding(TARGET, objs)
+
+    return env
+
