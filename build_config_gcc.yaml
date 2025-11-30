@@ -159,6 +159,48 @@ common_projects:
   - path: example/bt/test_example/project
     boards: *bt_boards
 
+  - path: example/cherryusb/device/audio_v1_mic/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/audio_v1_mic_speaker/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/cdc_acm/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/cdc_acm_uart/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/cdc_hid_msc/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/hid_mouse/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/msc/emmc_disk/project
+    boards: 
+      - sf32lb56-lcd_n16r12n1
+
+  - path: example/cherryusb/device/msc/nor_flash_disk/project
+    boards: 
+      - sf32lb56-lcd_n16r12n1
+
+  - path: example/cherryusb/device/msc/ram_disk/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/msc/ram_disk_dual/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/device/msc/sdcard_disk/project
+    boards:
+      - sf32lb52-lcd_n16r8
+
+  - path: example/cherryusb/host/cdc_acm_host/project
+    boards: *bt_boards
+
+  - path: example/cherryusb/host/hid/project
+    boards: *bt_boards
+
   - path: example/get-started/blink/rtt/project
     boards: *default_boards
 
@@ -180,8 +222,19 @@ common_projects:
   - path: example/hal/crc/project
     boards: *525_devkit_lcd_boards
 
+  - path: example/hal/epic/project
+    boards: *525_devkit_lcd_boards
+
   - path: example/hal/ezip/project
     boards: *525_devkit_lcd_boards
+
+  - path: example/hal/facc/project
+    boards:
+      - sf32lb56-lcd_n16r12n1
+
+  - path: example/hal/fft/project
+    boards:
+      - sf32lb56-lcd_n16r12n1
 
   - path: example/hal/gpio/project
     boards: *525_devkit_lcd_boards
@@ -194,6 +247,10 @@ common_projects:
   
   - path: example/hal/i2c/eeprom/project
     boards: *525_devkit_lcd_boards
+
+  - path: example/hal/nnacc/project
+    boards:
+      - sf32lb56-lcd_n16r12n1
 
   - path: example/hal/pwm/project
     boards: *525_devkit_lcd_boards
@@ -222,8 +279,19 @@ common_projects:
   - path: example/hal_example/project
     boards: *default_boards
 
+  - path: example/jpeg_dec/project
+    boards: 
+      - sf32lb58-lcd_n16r64n4
+  
   - path: example/misc/button/project
     boards: *525_devkit_lcd_boards
+
+  - path: example/misc/elm_rw/project
+    boards: *525_devkit_lcd_boards
+
+  - path: example/multicore/acpu_task/project/hcpu
+    boards: 
+      - sf32lb58-lcd_n16r64n4
 
   - path: example/multicore/rpmsg-lite/project/hcpu
     boards: *multicore_boards
@@ -234,8 +302,20 @@ common_projects:
   - path: example/multicore/ipc_queue/project/hcpu
     boards: *multicore_boards
 
+  - path: example/multimedia/agif/lvgl/project
+    boards: 
+      - eh-lb525
+
+  - path: example/multimedia/agif/lvgl_v9/project
+    boards: 
+      - eh-lb525
+
   - path: example/multimedia/audio/local_music/project
     boards: *after_55x_boards
+
+  - path: example/multimedia/audio/mp3_sd_player/project
+    boards: 
+      - sf32lb52-lchspi-ulp
 
   - path: example/multimedia/audio/record/project
     boards: *after_55x_boards
