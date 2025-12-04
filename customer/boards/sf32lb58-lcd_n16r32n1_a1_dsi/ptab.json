@@ -1,24 +1,14 @@
 [
     {"version": "2"},
     {
-        "mem":    "flash5", 
-        "base":   "0x1C000000",
-        "regions":   [
-             {
-                "offset": "0x00080000", 
-                "max_size": "0x00400000",
-                "name": "main",
-                "type": ["app_exec", "app_img"]
-            } 
-        ]
-    },    
-    {
         "mem":    "psram1", 
         "base":   "0x60000000",
         "regions":   [
             {
                 "offset": "0x00000000",
-                "max_size": "0x00400000"
+                "max_size": "0x00400000", 
+                "name": "main",
+                "type": ["app_exec"]
             },
             {
                 "offset": "0x00400000", 
@@ -44,7 +34,9 @@
         [
             {
                 "offset": "0x00000000", 
-                "max_size": "0x00400000"
+                "max_size": "0x00400000", 
+                "name": "main",
+                "type": ["app_img"]
             },
             {
                 "offset": "0x00400000", 
