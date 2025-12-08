@@ -316,20 +316,20 @@ def action_extensions(base_actions: Dict, project_path: str) -> Any:
         except Exception as e:
             print(f"Error: {e}")
 
-    def login_callback(target_name: str, ctx: Context, args: PropertyDict, name: str, token: str) -> None:
+    def login_callback(target_name: str, ctx: Context, args: PropertyDict, user: str, token: str) -> None:
         """Login to SiFli package registry and store credentials"""
         try:
             # First, try to login with conan
             subprocess.run([
-                "conan", "remote", "login", "-p", token, "artifactory", name.lower()
+                "conan", "remote", "login", "-p", token, "artifactory", user.lower()
             ], check=True)
             print("Logged in to SiFli package registry")
             
             # If login successful, store credentials
             credentials = load_credentials()
-            credentials[name] = token
+            credentials[user] = token
             save_credentials(credentials)
-            print(f"Credentials stored for user: {name}")
+            print(f"Credentials stored for user: {user}")
             
         except subprocess.CalledProcessError as e:
             print(f"Error logging in: {e}")
