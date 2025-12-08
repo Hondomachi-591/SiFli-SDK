@@ -100,6 +100,10 @@ First, enable the required macro switches in menuconfig
 ![Battery Calculator](../../assets/battery_open4.png)
 4. Configure plug/unplug detection pin corresponding to your board's detection pin
 ![Battery Calculator](../../assets/battery_open3.png)
+5. Select the polarity of the plug/unplug detection pin for the current board (choose according to actual situation).
+![Battery Calculator](../../assets/charge_pin_2.png)
+Selecting this option means enabling the `BSP_CHARGER_INT_PIN_ACTIVE_HIGH` macro. This macro defines the polarity of the charger detection pin. When `BSP_CHARGER_INT_PIN_ACTIVE_HIGH` is defined, it indicates that the charger insertion state is represented by a high level. When this macro is not defined, the default is to use a low level to represent the charger insertion state.
+![Battery Calculator](../../assets/charge_pin.png)
 
 ### Complete Application Layer Example Code
 ```c
@@ -208,5 +212,8 @@ A: Check if the battery curve table matches actual battery characteristics. Reca
 
 **Q: How to disable secondary filter?**  
 A: Set `secondary_filter_enabled = false`.
+
+**Q: Battery level value stuck at a fixed number?**
+A: The current battery algorithm has the following logic processing: in charging state, battery level is not allowed to decrease, and in discharging state, battery level is not allowed to increase. When such abnormal situations occur, the battery level will remain at the current value for stabilization. You can check the log to confirm whether "Current status" matches the real state. If they don't match, you need to adjust the `BSP_CHARGER_INT_PIN_ACTIVE_HIGH` macro.
 
 

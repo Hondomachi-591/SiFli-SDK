@@ -100,6 +100,10 @@ rt_kprintf("Battery: %d%%\n", percentage);
 ![Battery Calculator](../../assets/battery_open4.png)
 4.配置插拔检测引脚,对应当前板子的插拔检测引脚
 ![Battery Calculator](../../assets/battery_open3.png)
+5.选择当前板子插拔引脚的极性(根据实际情况选择)。 
+![Battery Calculator](../../assets/charge_pin_2.png)
+选中即代表启用了 `BSP_CHARGER_INT_PIN_ACTIVE_HIGH` 宏，这个宏的作用是定义充电器检测引脚的电平极性,当定义了 `BSP_CHARGER_INT_PIN_ACTIVE_HIGH `时，表示充电器插入状态由高电平表示，当未定义此宏时，默认使用低电平表示充电器插入状态。
+![Battery Calculator](../../assets/charge_pin.png)
 
 ### 应用层完整示例代码
 ```c
@@ -209,4 +213,5 @@ A: 检查电池曲线表是否符合实际电池特性，必要时重新校准�
 **Q: 如何禁用二级滤波？**  
 A: 设置 `secondary_filter_enabled = false`。
 
-
+**Q: 电量值一直卡在固定数值？**  
+A: 当前电量算法有做如下逻辑处理：充电状态下不允许电量下降，放电状态下不允许电量上升。当出现这种反常情况时，电量将保持在当前数值进行稳定。可以通过查看log，确认 Current status 是否与现实状态一致,不一致的话需要调整 `BSP_CHARGER_INT_PIN_ACTIVE_HIGH`宏。
