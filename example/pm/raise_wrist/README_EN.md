@@ -14,6 +14,13 @@ The example can run on the following development boards:
   Inactivity detection: If a button is pressed or the screen is touched within 10 seconds, it's considered as user activity, and the time will be reset to the default value.
 * Sensor data processing: Uses LSM6DSL sensor (accelerometer + gyroscope), continuously reads acceleration data with a 200ms sampling period, and processes the data through algorithms to implement gesture recognition (wrist raise/lower detection).
 
+* Data Summary (using 200mAh battery capacity as an example)
+|          |Wake-up Work    |Screen-off Sleep      |Daily Consumption      |Usable Days |
+|:---      |:---            |:---                  |:---                   |:---        |
+|100 times/day|6.3mAh      |9.7mAh               |16.0mAh                |12.5 days   |
+|300 times/day|18.8mAh     |9.5mAh               |28.3mAh                |7.1 days    |
+|500 times/day|31.4mAh     |9.3mAh               |40.7mAh                |4.9 days    |
+|**Average Power Consumption in Two Modes**|**Screen-off (Low Power Mode):** 410uAh |**Screen-on (Working Mode):** 22.6mAh  |
 ## How to Use the Example
 
 ### Hardware Connection
@@ -266,10 +273,3 @@ please input the serial port num:5
   - Moderate usage: 0.410 * (24 * 3600 - 300 * 10) / 3600 + 18.8 = 28.3(mAh)
   - Heavy usage: 0.410 * (24 * 3600 - 500 * 10) / 3600 + 31.4 = 40.7(mAh)
 
-### Data Summary
-
-|          | Active Work    | Sleep Mode      | Daily Total      | Battery Life |
-|:---      |:---            |:---             |:---              |:---          |
-|100 times/day|6.3mAh         |9.7mAh          |16.0mAh           |12.5 days     |
-|300 times/day|18.8mAh        |9.5mAh          |28.3mAh           |7.1 days      |
-|500 times/day|31.4mAh        |9.3mAh          |40.7mAh           |4.9 days      |
