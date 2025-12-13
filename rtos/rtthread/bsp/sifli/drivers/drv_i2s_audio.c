@@ -524,7 +524,14 @@ static rt_err_t bf0_audio_i2s_start(struct bf0_i2s_audio *aud, int stream)
         HAL_RCC_EnableModule(RCC_MOD_I2S1);
     }
 #else
-    HAL_RCC_EnableModule(RCC_MOD_I2S1);
+    if (hi2s->Instance == hwp_i2s2)
+    {
+        HAL_RCC_EnableModule(RCC_MOD_I2S2);
+    }
+    else
+    {
+        HAL_RCC_EnableModule(RCC_MOD_I2S1);
+    }
 #endif
     // TODO: set to xtal now, change it if PLL can used
     //__HAL_I2S_CLK_XTAL(hi2s);   // xtal use 48M for asic
