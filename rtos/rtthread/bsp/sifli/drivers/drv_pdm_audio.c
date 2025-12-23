@@ -260,7 +260,17 @@ static rt_err_t bf0_audio_configure(struct rt_audio_device *audio, struct rt_aud
 
              but we except it been invoked before HAL_PDM_Config
         */
-        HAL_RCC_EnableModule(RCC_MOD_PDM1);
+#if defined(BSP_USING_PDM2) && defined(hwp_pdm2)
+        if (hwp_pdm2 == hpdm->Instance)
+        {
+            HAL_RCC_EnableModule(RCC_MOD_PDM2);
+        }
+#endif
+        if (hwp_pdm1 == hpdm->Instance)
+        {
+            HAL_RCC_EnableModule(RCC_MOD_PDM1);
+        }
+
         HAL_PDM_Init(hpdm);
         switch (caps->sub_type)
         {
